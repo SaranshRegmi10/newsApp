@@ -12,33 +12,45 @@ import {
 } from 'lucide-react';
 
 const categories = [
-  { name: 'business', icon: <Briefcase className="w-5 h-5" /> },
-  { name: 'entertainment', icon: <Film className="w-5 h-5" /> },
-  { name: 'general', icon: <Globe className="w-5 h-5" /> },
-  { name: 'health', icon: <HeartPulse className="w-5 h-5" /> },
-  { name: 'science', icon: <FlaskConical className="w-5 h-5" /> },
-  { name: 'sports', icon: <Trophy className="w-5 h-5" /> },
-  { name: 'technology', icon: <Smartphone className="w-5 h-5" /> },
+  { name: 'business', icon: <Briefcase /> },
+  { name: 'entertainment', icon: <Film /> },
+  { name: 'general', icon: <Globe /> },
+  { name: 'health', icon: <HeartPulse /> },
+  { name: 'science', icon: <FlaskConical /> },
+  { name: 'sports', icon: <Trophy /> },
+  { name: 'technology', icon: <Smartphone /> },
 ];
 
 const CategoryTabs = ({ activeCategory }) => {
   return (
-    <div className="flex overflow-x-auto py-2 scrollbar-hide">
-      <div className="flex space-x-4 mx-4">
-        {categories.map((category) => (
-          <Link
-            key={category.name}
-            href={`/top-heading?category=${category.name}`}
-            className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg whitespace-nowrap ${
-              activeCategory === category.name
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {category.icon}
-            <span className="ml-2 capitalize">{category.name}</span>
-          </Link>
-        ))}
+    <div className="w-full bg-[#0b1120]/80 backdrop-blur-md sticky top-0 z-50 border-b border-white/5">
+      <div className="flex overflow-x-auto py-4 scrollbar-hide max-w-7xl mx-auto px-4">
+        <div className="flex space-x-3">
+          {categories.map((category) => {
+            const isActive = activeCategory === category.name;
+            
+            return (
+              <Link
+                key={category.name}
+                href={`/top-heading?category=${category.name}`}
+                className={`
+                  flex items-center px-5 py-2.5 text-sm font-semibold transition-all duration-300 rounded-full whitespace-nowrap group
+                  ${isActive 
+                    ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]' 
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200 border border-white/10'
+                  }
+                `}
+              >
+                {/* Icon with subtle animation on hover */}
+                <span className={`transition-transform duration-300 ${!isActive && 'group-hover:scale-110 group-hover:text-blue-400'}`}>
+                  {React.cloneElement(category.icon, { className: "w-4 h-4" })}
+                </span>
+                
+                <span className="ml-2.5 capitalize tracking-wide">{category.name}</span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

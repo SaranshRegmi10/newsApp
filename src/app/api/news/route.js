@@ -2,21 +2,37 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
-  // Extract query parameters from the request
+  // 1. Extract query parameters
   const { searchParams } = new URL(request.url);
   const category = searchParams.get('category') || 'business';
   const page = searchParams.get('page') || 1;
+  const query = searchParams.get('q');
+  const country = searchParams.get('country') || 'us';
+  const sortBy = searchParams.get('sortBy') || 'publishedAt';
+
+  const apiKey = 'be79946665fc4be1bc49995cbd4041f4'; 
+  
+  // 2. Determine the correct URL (Define this BEFORE fetching)
+  let apiUrl = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}&page=${page}`;
+
+  if (query) {
+    // Corrected spelling: 'everything' and 'apiKey'
+    apiUrl = `https://newsapi.org/v2/everything?q=${query}&sortBy=${sortBy}&page=${page}&apiKey=${apiKey}`;
+  }
 
   try {
-    // Fetch data from NewsAPI
-    const apiKey = 'be79946665fc4be1bc49995cbd4041f4'; // Replace with your API key
-    const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${apiKey}&page=${page}`;
+    // 3. Perform the fetch
+    const res = await fetch(apiUrl, { next: { revalidate: 3600 } });
+    
+    if (!res.ok) {
+      throw new Error(`NewsAPI responded with status: ${res.status}`);
+    }
 
-    const response = await fetch(apiUrl);
-    const data = await response.json();
+    const data = await res.json();
 
-    // Return the fetched data as a JSON response
+    // 4. IMPORTANT: Return the data to your frontend
     return NextResponse.json(data);
+
   } catch (error) {
     console.error('Error fetching news data:', error);
     return NextResponse.json(
